@@ -1,53 +1,55 @@
 @echo off
-chcp 65001 >nul
-title íƒ„ì†Œì¤‘ë¦½ PC ì „ì› ê´€ë¦¬ìž Pro ì„¤ì¹˜ ë° ìžë™ ì‹¤í–‰ ë“±ë¡
+setlocal enabledelayedexpansion
+chcp 949 >nul
 
 echo ================================================================
-echo   ðŸŒ¿ [ê²½ê¸°ë‚¨ë¶€ê²½ì°°ì²­] íƒ„ì†Œì¤‘ë¦½ PC ì „ì› ê´€ë¦¬ìž Pro ìžë™ ì„¤ì¹˜ê¸°
+echo   [°æ±â³²ºÎ°æÂûÃ»] Åº¼ÒÁß¸³ PC Àü¿ø °ü¸®ÀÚ Pro ÀÚµ¿ ¼³Ä¡±â
 echo ================================================================
 echo.
 
 set "INSTALL_DIR=%LOCALAPPDATA%\EcoPowerManager"
 set "EXE_NAME=EcoPowerManagerPro.exe"
-set "SRC_EXE=%~dp0%EXE_NAME%"
-if not exist "%SRC_EXE%" (
-    set "SRC_EXE=%~dp0web\downloads\%EXE_NAME%"
-)
-if not exist "%SRC_EXE%" (
-    set "SRC_EXE=%~dp0dist\%EXE_NAME%"
-)
 
-if not exist "%SRC_EXE%" (
-    echo [ì˜¤ë¥˜] %EXE_NAME% íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
-    echo ì‹¤í–‰ íŒŒì¼ê³¼ ê°™ì€ í´ë”ì— install.batì„ ë‘ê³  ì‹¤í–‰í•´ ì£¼ì„¸ìš”.
-    echo.
+set "SRC_EXE=%~dp0%EXE_NAME%"
+if exist "%SRC_EXE%" goto FOUND
+set "SRC_EXE=%~dp0web\downloads\%EXE_NAME%"
+if exist "%SRC_EXE%" goto FOUND
+set "SRC_EXE=%~dp0dist\%EXE_NAME%"
+if exist "%SRC_EXE%" goto FOUND
+
+echo [¿À·ù] %EXE_NAME% ½ÇÇà ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.
+echo ½ÇÇà ÆÄÀÏ°ú °°Àº Æú´õ¿¡ install.batÀ» µÎ°í ½ÇÇàÇØ ÁÖ¼¼¿ä.
+echo.
+pause
+exit /b 1
+
+:FOUND
+echo [1/4] ½ÇÇà ÁßÀÎ ±âÁ¸ ÇÁ·Î±×·¥ Á¤¸® Áß...
+taskkill /f /im %EXE_NAME% >nul 2>&1
+
+echo [2/4] ÇÁ·Î±×·¥ ¼³Ä¡ Æú´õ·Î º¹»ç Áß... (%INSTALL_DIR%)
+if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
+copy /y "%SRC_EXE%" "%INSTALL_DIR%\%EXE_NAME%" >nul
+if errorlevel 1 (
+    echo [¿À·ù] ÆÄÀÏ º¹»ç¿¡ ½ÇÆÐÇß½À´Ï´Ù.
     pause
     exit /b 1
 )
 
-echo [1/4] ì‹¤í–‰ ì¤‘ì¸ ê¸°ì¡´ í”„ë¡œì„¸ìŠ¤ ì •ë¦¬ ì¤‘...
-taskkill /f /im %EXE_NAME% >nul 2>&1
+echo [3/4] Windows ½ÃÀÛ ½Ã ÀÚµ¿ ½ÇÇà µî·Ï Áß...
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "EcoPowerManagerPro" /t REG_SZ /d ""%INSTALL_DIR%\%EXE_NAME%"" /f >nul
 
-echo [2/4] í”„ë¡œê·¸ëž¨ ì„¤ì¹˜ í´ë” êµ¬ì„± ì¤‘ (%INSTALL_DIR%)...
-if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
-copy /y "%SRC_EXE%" "%INSTALL_DIR%\%EXE_NAME%" >nul
-
-echo [3/4] Windows ë¶€íŒ… ì‹œ ìžë™ ì‹¤í–‰ ë“±ë¡ ì¤‘...
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "EcoPowerManagerPro" /t REG_SZ /d "\"%INSTALL_DIR%\%EXE_NAME%\"" /f >nul
-
-echo [4/4] ë°”ë¡œê°€ê¸° ì•„ì´ì½˜ ìƒì„± ë° í”„ë¡œê·¸ëž¨ ì‹¤í–‰ ì¤‘...
-powershell -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut([Environment]::GetFolderPath('Desktop') + '\íƒ„ì†Œì¤‘ë¦½ PC ê´€ë¦¬ìž.lnk'); $s.TargetPath = '%INSTALL_DIR%\%EXE_NAME%'; $s.WorkingDirectory = '%INSTALL_DIR%'; $s.Save()" >nul 2>&1
-
-start "" "%INSTALL_DIR%\%EXE_NAME%"
+echo [4/4] ¹ÙÅÁÈ­¸é ¹Ù·Î°¡±â »ý¼º ¹× ÇÁ·Î±×·¥ ½ÇÇà Áß...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ws = New-Object -ComObject WScript.Shell; $desktop = [Environment]::GetFolderPath('Desktop'); $shortcut = $ws.CreateShortcut($desktop + '\Åº¼ÒÁß¸³ PC °ü¸®ÀÚ.lnk'); $shortcut.TargetPath = '%INSTALL_DIR%\%EXE_NAME%'; $shortcut.WorkingDirectory = '%INSTALL_DIR%'; $shortcut.Save(); Start-Process '%INSTALL_DIR%\%EXE_NAME%' -WorkingDirectory '%INSTALL_DIR%'" >nul 2>&1
 
 echo.
 echo ================================================================
-echo   âœ… ì„¤ì¹˜ ë° Windows ë¶€íŒ… ì‹œ ìžë™ ì‹¤í–‰ ë“±ë¡ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤!
+echo   [¼º°ø] ¼³Ä¡ ¹× ÀÚµ¿ ½ÇÇà µî·ÏÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù!
 echo.
-echo   - ì„¤ì¹˜ ìœ„ì¹˜ : %INSTALL_DIR%
-echo   - ë°”íƒ•í™”ë©´ ë°”ë¡œê°€ê¸° ìƒì„± ì™„ë£Œ
-echo   - ì‹œìŠ¤í…œ íŠ¸ë ˆì´(ìš°ì¸¡ í•˜ë‹¨)ì—ì„œ ìžë™ ê´€ë¦¬ê°€ ì‹œìž‘ë©ë‹ˆë‹¤.
+echo   - ¼³Ä¡ °æ·Î : %INSTALL_DIR%
+echo   - ¹ÙÅÁÈ­¸é ¹Ù·Î°¡±â : Åº¼ÒÁß¸³ PC °ü¸®ÀÚ
+echo   - ÀÛ¾÷Ç¥½ÃÁÙ(¿ìÃø ÇÏ´Ü) ½Ã½ºÅÛ Æ®·¹ÀÌ¿¡¼­ µ¿ÀÛÀ» ½ÃÀÛÇÕ´Ï´Ù.
 echo ================================================================
 echo.
-timeout /t 5 >nul
+ping -n 3 127.0.0.1 >nul
 exit /b 0

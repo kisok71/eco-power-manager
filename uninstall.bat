@@ -1,29 +1,29 @@
 @echo off
-chcp 65001 >nul
-title íƒ„ì†Œì¤‘ë¦½ PC ì „ì› ê´€ë¦¬ìž Pro ì‚­ì œ
+setlocal
+chcp 949 >nul
 
 echo ================================================================
-echo   ðŸ—‘ï¸ íƒ„ì†Œì¤‘ë¦½ PC ì „ì› ê´€ë¦¬ìž Pro ì‚­ì œ (ì œê±°)
+echo   [°æ±â³²ºÎ°æÂûÃ»] Åº¼ÒÁß¸³ PC Àü¿ø °ü¸®ÀÚ Pro »èÁ¦ (Á¦°Å)
 echo ================================================================
 echo.
 
 set "INSTALL_DIR=%LOCALAPPDATA%\EcoPowerManager"
 set "EXE_NAME=EcoPowerManagerPro.exe"
 
-echo [1/3] í”„ë¡œê·¸ëž¨ í”„ë¡œì„¸ìŠ¤ ì¢…ë£Œ ì¤‘...
+echo [1/3] ÇÁ·Î±×·¥ ÇÁ·Î¼¼½º Á¾·á Áß...
 taskkill /f /im %EXE_NAME% >nul 2>&1
 
-echo [2/3] ìžë™ ì‹¤í–‰ ë ˆì§€ìŠ¤íŠ¸ë¦¬ ë° ë°”ë¡œê°€ê¸° ì‚­ì œ ì¤‘...
+echo [2/3] ÀÚµ¿ ½ÇÇà ·¹Áö½ºÆ®¸® ¹× ¹Ù·Î°¡±â »èÁ¦ Áß...
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "EcoPowerManagerPro" /f >nul 2>&1
-del /f /q "%USERPROFILE%\Desktop\íƒ„ì†Œì¤‘ë¦½ PC ê´€ë¦¬ìž.lnk" >nul 2>&1
+del /f /q "%USERPROFILE%\Desktop\Åº¼ÒÁß¸³ PC °ü¸®ÀÚ.lnk" >nul 2>&1
 
-echo [3/3] í”„ë¡œê·¸ëž¨ íŒŒì¼ ì‚­ì œ ì¤‘...
+echo [3/3] ÇÁ·Î±×·¥ ÆÄÀÏ »èÁ¦ Áß...
 if exist "%INSTALL_DIR%" rmdir /s /q "%INSTALL_DIR%" >nul 2>&1
 
 echo.
 echo ================================================================
-echo   âœ… í”„ë¡œê·¸ëž¨ ë° ìžë™ ì‹¤í–‰ ë“±ë¡ì´ ì™„ì „ížˆ ì œê±°ë˜ì—ˆìŠµë‹ˆë‹¤.
+echo   [¼º°ø] ÇÁ·Î±×·¥ ¹× ÀÚµ¿ ½ÇÇà µî·ÏÀÌ ¿ÏÀüÈ÷ Á¦°ÅµÇ¾ú½À´Ï´Ù.
 echo ================================================================
 echo.
-timeout /t 3 >nul
+ping -n 3 127.0.0.1 >nul
 exit /b 0
