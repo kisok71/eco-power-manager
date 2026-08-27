@@ -15,6 +15,7 @@ taskkill /f /im %EXE_NAME% >nul 2>&1
 
 echo [2/3] 자동 실행 레지스트리 및 바로가기 삭제 중...
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "EcoPowerManagerPro" /f >nul 2>&1
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$desktop = [Environment]::GetFolderPath('Desktop'); Remove-Item -LiteralPath (Join-Path $desktop '탄소중립 PC 관리자.lnk') -Force -ErrorAction SilentlyContinue" >nul 2>&1
 del /f /q "%USERPROFILE%\Desktop\탄소중립 PC 관리자.lnk" >nul 2>&1
 
 echo [3/3] 프로그램 파일 삭제 중...

@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEB_DIR = os.path.join(BASE_DIR, "web")
 DOWNLOADS_DIR = os.path.join(WEB_DIR, "downloads")
 DIST_DIR = os.path.join(BASE_DIR, "dist")
-VERSION = "2.1.0"
+VERSION = "2.2.0"
 
 def build_exe():
     print("=" * 65)
@@ -50,6 +50,12 @@ def package_for_web():
     print("\n" + "=" * 65)
     print(" [2/3] 웹 배포 폴더(web/downloads/)로 파일 복사 및 ZIP 압축")
     print("=" * 65)
+
+    try:
+        import generate_bat_files
+        generate_bat_files.generate()
+    except Exception as e:
+        print(f"[WARN] 배치 파일 생성 중 예외 발생: {e}")
 
     os.makedirs(DOWNLOADS_DIR, exist_ok=True)
     built_exe = os.path.join(DIST_DIR, "EcoPowerManagerPro.exe")

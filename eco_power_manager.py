@@ -18,7 +18,7 @@ import pystray
 from PIL import Image, ImageDraw
 
 # 프로그램 버전 및 웹 배포 설정
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.2.0"
 APP_TITLE = "탄소중립 PC 전원 관리자 Pro"
 # 웹 배포 서버 URL (GitHub Pages)
 WEB_DOWNLOAD_URL = "https://kisok71.github.io/eco-power-manager/"
@@ -46,6 +46,21 @@ CONFIG_FILE = os.path.join(BASE_DIR, "eco_power_config.json")
 LOG_FILE = os.path.join(BASE_DIR, "eco_power_log.txt")
 AUTOSTART_REG_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 APP_REG_NAME = "EcoPowerManagerPro"
+
+
+def remove_zone_identifier():
+    """웹 브라우저 다운로드 시 파일에 붙는 Windows Zone.Identifier(보안 경고 팝업) ADS 스트림 자동 해제"""
+    if sys.platform == "win32":
+        try:
+            target_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
+            ads_path = f"{target_path}:Zone.Identifier"
+            ctypes.windll.kernel32.DeleteFileW(ads_path)
+        except Exception:
+            pass
+
+
+# 프로그램 구동 즉시 웹 다운로드 보안 차단(Zone.Identifier) 해제 실행
+remove_zone_identifier()
 
 
 class LASTINPUTINFO(ctypes.Structure):
@@ -84,6 +99,10 @@ class EcoPowerManager:
         self.only_weekdays = True
         self.screen_off_triggered = False
         
+        # 5분(300초) 미입력 시 자동 시작 카운트다운 타이머
+        self.auto_start_countdown = 300
+        self.auto_start_timer_job = None
+        
         self.tray_icon = None
         self.sleep_dialog = None
         self.shutdown_dialog = None
@@ -103,7 +122,7 @@ class EcoPowerManager:
         web_link.bind("<Button-1>", lambda e: self.open_web_page())
         
         # 실시간 상태 표시 레이블
-        self.status_label = tk.Label(root, text="상태: 자동 관리 대기 중", font=self.font_status, fg="#555555")
+        self.status_label = tk.Label(root, text="상태: 자동 관리 대기 중 (5분 후 자동 시작)", font=self.font_status, fg="#1565C0")
         self.status_label.pack(pady=(0, 6))
 
         # --- 설정 불러오기 ---
@@ -176,6 +195,9 @@ class EcoPowerManager:
 
         # UI 실시간 상태 갱신 루프 시작
         self.update_status_ui()
+
+        # 5분 미작동 시 자동 시작 카운트다운 가동
+        self.start_auto_start_timer()
 
         # 백그라운드에서 신규 버전 자동 확인 (비동기)
         threading.Thread(target=self.check_for_updates_silent, daemon=True).start()
@@ -350,6 +372,32 @@ class EcoPowerManager:
         except Exception:
             return False
 
+    def start_auto_start_timer(self):
+        """5분(300초) 동안 사용자 시작 조작이 없을 경우 자동 시작 카운트다운"""
+        if self.auto_start_timer_job:
+            self.root.after_cancel(self.auto_start_timer_job)
+            self.auto_start_timer_job = None
+
+        if not self.is_running and self.auto_start_countdown > 0:
+            self.update_auto_start_timer()
+
+    def update_auto_start_timer(self):
+        """1초마다 5분 카운트다운 갱신 및 0초 도달 시 자동 시작 실행"""
+        if self.is_running:
+            return
+
+        if self.auto_start_countdown > 0:
+            mins, secs = divmod(self.auto_start_countdown, 60)
+            self.status_label.config(
+                text=f"상태: 자동 관리 대기 중 ({mins}분 {secs:02d}초 후 자동 시작)",
+                fg="#1565C0"
+            )
+            self.auto_start_countdown -= 1
+            self.auto_start_timer_job = self.root.after(1000, self.update_auto_start_timer)
+        else:
+            self.log_event("5분간 대기 후 사용자 입력이 없어 자동 관리를 자동 시작합니다.")
+            self.toggle_timer()
+
     def update_status_ui(self):
         """메인 창 상태 문구 실시간 갱신"""
         if self.is_running:
@@ -363,15 +411,21 @@ class EcoPowerManager:
             else:
                 status_text = f"상태: 자동 관리 동작 중 (점심 {self.target_lunch} / 퇴근 {self.target_work})"
                 fg_color = "#1B5E20"
+            self.status_label.config(text=status_text, fg=fg_color)
         else:
-            status_text = "상태: 자동 관리 대기 중"
-            fg_color = "#555555"
+            if self.auto_start_countdown <= 0:
+                self.status_label.config(text="상태: 자동 관리 대기(중지) 중", fg="#555555")
 
-        self.status_label.config(text=status_text, fg=fg_color)
         self.status_update_job = self.root.after(2000, self.update_status_ui)
 
     def toggle_timer(self):
         """자동 관리 시작/중지 전환"""
+        # 5분 자동 시작 카운트다운 타이머 중단
+        if self.auto_start_timer_job:
+            self.root.after_cancel(self.auto_start_timer_job)
+            self.auto_start_timer_job = None
+        self.auto_start_countdown = 0
+
         if not self.is_running:
             lunch_val = self.lunch_entry.get().strip()
             work_val = self.work_entry.get().strip()
@@ -424,6 +478,12 @@ class EcoPowerManager:
     def stop_timer(self):
         """자동 관리 중지 처리"""
         self.is_running = False
+
+        # 자동 시작 타이머 완전 정지
+        if self.auto_start_timer_job:
+            self.root.after_cancel(self.auto_start_timer_job)
+            self.auto_start_timer_job = None
+        self.auto_start_countdown = 0
 
         # 입력창 활성화
         self.lunch_entry.config(state="normal")
@@ -706,6 +766,8 @@ class EcoPowerManager:
             self.is_running = False
             
             # 모든 타이머 잡 및 예약 취소
+            if self.auto_start_timer_job:
+                self.root.after_cancel(self.auto_start_timer_job)
             if self.status_update_job:
                 self.root.after_cancel(self.status_update_job)
             if self.sleep_timer_job:
