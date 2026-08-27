@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.spec
+.vscode/
+.idea/
+eco_power_config.json
+eco_power_log.txt

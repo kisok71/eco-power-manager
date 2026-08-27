@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탄소중립 PC 전원 관리자 Pro | 공식 웹 배포 센터</title>
+  <meta name="description" content="점심시간 자동 절전, 퇴근시간 시스템 자동 종료로 PC 대기전력을 절감하는 탄소중립 PC 전원 관리 프로그램">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2E7D32;
+      --primary-light: #4CAF50;
+      --primary-dark: #1B5E20;
+      --secondary: #1565C0;
+      --accent: #E8F5E9;
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      background: #E8F5E9;
+      color: var(--primary);
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .btn-nav-download {
+      background: var(--primary);
+      color: white !important;
+      padding: 8px 18px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-nav-download:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1100px;
+      margin: 40px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #E8F5E9;
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #0F172A;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span {
+      color: var(--primary);
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, var(--primary) 0%, #1E4620 100%);
+      color: white;
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 20px -5px rgba(46, 125, 50, 0.4);
+      transition: all 0.25s ease;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px -5px rgba(46, 125, 50, 0.5);
+    }
+
+    .btn-sub {
+      background: white;
+      color: var(--text);
+      text-decoration: none;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-sub:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .meta-info {
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    /* App Preview Mockup */
+    .app-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .window-header {
+      background: #F1F5F9;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .window-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .app-content {
+      padding: 24px;
+      background: #FAFAFA;
+    }
+
+    .mock-row {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .mock-badge {
+      background: #E8F5E9;
+      color: var(--primary);
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .mock-btn {
+      background: #A5D6A7;
+      color: #1B5E20;
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-top: 16px;
+      font-size: 0.95rem;
+    }
+
+    /* Features Grid */
+    .section {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-subtitle {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-light);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      color: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+    }
+
+    .feature-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0F172A;
+    }
+
+    .feature-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Carbon Impact Banner */
+    .impact-banner {
+      background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 32px;
+      align-items: center;
+      margin: 80px auto;
+    }
+
+    .impact-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .impact-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #A5D6A7;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* Guide & FAQ */
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .step-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      color: #0F172A;
+    }
+
+    .faq-a {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      background: #0F172A;
+      color: #94A3B8;
+      padding: 48px 24px 32px;
+      border-top: 1px solid #1E293B;
+      margin-top: 100px;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-info h4 {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .footer-copy {
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        margin: 20px auto 40px;
+      }
+      .hero-title {
+        font-size: 2rem;
+      }
+      .impact-banner {
+        grid-template-columns: 1fr;
+        padding: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        🌿 탄소중립 PC 관리자 Pro
+        <span class="logo-badge">v2.1.0</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">주요기능</a>
+        <a href="#guide">설치방법</a>
+        <a href="#faq">FAQ</a>
+        <a href="downloads/EcoPowerManagerPro.exe" class="btn-nav-download" download>다운로드 (.exe)</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div>
+      <div class="hero-tag">
+        <span>✨</span> 2026 탄소중립 그린 스마트 오피스 솔루션
+      </div>
+      <h1 class="hero-title">
+        지구를 지키는 작은 습관,<br>
+        <span>PC 전원 자동 관리자 Pro</span>
+      </h1>
+      <p class="hero-desc">
+        점심시간 모니터·본체 자동 절전 전환부터 정시 퇴근 후 시스템 자동 종료까지!<br>
+        불필요한 대기전력을 완벽하게 차단하여 에너지 절약과 탄소중립을 실현합니다.
+      </p>
+
+      <div class="hero-actions">
+        <a href="downloads/EcoPowerManagerPro.exe" class="btn-download" download>
+          <span>⬇️</span> 최신 버전 다운로드 (v2.1.0)
+        </a>
+        <a href="#guide" class="btn-sub">사용 매뉴얼 보기</a>
+      </div>
+
+      <div class="meta-info">
+        <span>✔ Windows 10/11 전용</span>
+        <span>✔ 설치 불필요 (단일 실행 파일)</span>
+        <span>✔ 100% 무료 배포</span>
+      </div>
+    </div>
+
+    <!-- UI Mockup -->
+    <div class="app-card">
+      <div class="window-header">
+        <div class="window-dots">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+        <div class="window-title">탄소중립 PC 전원 관리자 Pro (v2.1.0)</div>
+        <div style="width: 30px;"></div>
+      </div>
+      <div class="app-content">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <strong style="color: #2E7D32; font-size: 1.1rem;">🌿 탄소중립 PC 전원 관리 Pro 🌿</strong>
+          <div style="font-size: 0.8rem; color: #1B5E20; font-weight: 600; margin-top: 4px;">● 상태: 자동 관리 동작 중 (점심 12:00 / 퇴근 18:00)</div>
+        </div>
+
+        <div class="mock-row">
+          <span>점심시간 (절전):</span>
+          <span class="mock-badge">12:00</span>
+        </div>
+        <div class="mock-row">
+          <span>퇴근시간 (종료):</span>
+          <span class="mock-badge">18:00</span>
+        </div>
+        <div class="mock-row">
+          <span>화면 끄기 (미사용):</span>
+          <span class="mock-badge">15 분</span>
+        </div>
+        <div style="font-size: 0.8rem; color: #475569; margin: 8px 4px;">
+          ☑ 평일(월~금)만 작동 &nbsp;|&nbsp; ☑ Windows 부팅 시 자동 실행
+        </div>
+        <div class="mock-btn">
+          ⏹ 자동 관리 동작 중 (트레이 상주)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <div class="section-subtitle">Core Features</div>
+      <h2 class="section-title">주요 핵심 기능</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🥗</div>
+        <h3 class="feature-title">점심시간 자동 절전</h3>
+        <p class="feature-desc">점심시간(기본 12:00)이 되면 60초 안내 카운트다운 후 PC를 자동으로 절전 모드로 전환합니다.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⏰</div>
+        <h3 class="feature-title">퇴근시간 시스템 자동 종료</h3>
+        <p class="feature-desc">퇴근시간(기본 18:00)에 60초 안내 알림 후 PC를 완전 종료합니다. 야근 시 1클릭으로 즉시 취소 가능합니다.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🖥️</div>
+        <h3 class="feature-title">유휴 시간 화면 절전</h3>
+        <p class="feature-desc">자리를 비워 키보드/마우스 입력이 없을 경우 설정된 시간 후 모니터 전원만 자동으로 끕니다.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3 class="feature-title">평일 전용 & 부팅 시 자동실행</h3>
+        <p class="feature-desc">주말(토, 일)에는 불필요하게 켜지거나 꺼지지 않으며, Windows 부팅 시 백그라운드에서 자동 실행됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carbon Impact -->
+  <section class="section">
+    <div class="impact-banner">
+      <div>
+        <h2 class="impact-title">연간 1대당 온실가스 약 32kg CO₂ 감축</h2>
+        <p style="opacity: 0.9; line-height: 1.6;">
+          점심시간 1시간 절전 및 퇴근 후 낭비 전력을 차단하는 것만으로도 소나무 약 4.8그루를 심는 효과를 얻을 수 있습니다.
+        </p>
+      </div>
+      <div class="impact-stats">
+        <div class="stat-box">
+          <div class="stat-number">약 75 kWh</div>
+          <div class="stat-label">연간 PC 1대 전력 절감</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">소나무 4.8그루</div>
+          <div class="stat-label">식재 효과 (PC 1대당)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install Guide -->
+  <section class="section" id="guide">
+    <div class="section-header">
+      <div class="section-subtitle">User Manual</div>
+      <h2 class="section-title">간편 설치 및 사용 방법</h2>
+    </div>
+
+    <div class="guide-steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">프로그램 다운로드</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">상단의 [다운로드] 버튼을 클릭하여 단일 실행 파일(<code>EcoPowerManagerPro.exe</code>)을 다운로드합니다.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">원하는 시간 설정</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">점심시간, 퇴근시간, 화면 끄기 시간을 입력하고 'Windows 부팅 시 자동 실행'을 체크합니다.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">자동 관리 시작</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">[▶ 자동 관리 시작]을 누르면 프로그램이 자동으로 우측 하단 시스템 트레이로 숨겨져 백그라운드 관리됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="section-header">
+      <div class="section-subtitle">FAQ</div>
+      <h2 class="section-title">자주 묻는 질문</h2>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">Q. 퇴근시간에 야근이나 긴급 업무 중이면 어떻게 하나요?</div>
+        <div class="faq-a">A. 퇴근 시간이 되면 60초 전 카운트다운 알림 창이 화면 최상단에 나타납니다. 이때 <strong>[종료 취소 (야근)]</strong> 버튼을 클릭하시면 당일 예약 종료가 안전하게 취소됩니다.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q. 숨겨진 프로그램 창은 어떻게 다시 여나요?</div>
+        <div class="faq-a">A. 윈도우 우측 하단 작업표시줄의 <strong>시스템 트레이(▲ 모양)</strong> 아이콘에서 초록색 나뭇잎 아이콘을 더블클릭하거나 마우스 우클릭 후 [설정 열기]를 클릭하시면 됩니다.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q. 스마트스크린(SmartScreen) 또는 보안 경고가 나타납니다.</div>
+        <div class="faq-a">A. 자체 제작 내부 배포 프로그램의 경우 공인 인증서 서명이 없어 나타날 수 있습니다. [추가 정보] → [실행]을 클릭하시면 정상 실행됩니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-info">
+        <h4>경기남부경찰청 정보화장비과</h4>
+        <p class="footer-copy">탄소중립 스마트 오피스 PC 전원 관리 프로젝트 (Eco Power Manager Pro)</p>
+      </div>
+      <div>
+        <p style="font-size: 0.85rem; color: #64748B;">버전: v2.1.0 (최신 빌드) | 문의: 정보화장비과 PC관리담당</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

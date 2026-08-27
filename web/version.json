@@ -1,0 +1,6 @@
+{
+  "latest_version": "2.1.0",
+  "release_date": "2026-08-27",
+  "download_url": "https://kisok71.github.io/eco-power-manager/downloads/EcoPowerManagerPro.exe",
+  "changelog": "- 점심시간 자동 절전 및 퇴근시간 자동 종료 알림 강화\n- 카운트다운 알림 창 닫기 시 안전 취소 보장\n- Windows 부팅 시 자동 실행 옵션 추가\n- 평일(월~금) 전용 동작 및 주말 예외 처리 지원\n- 고해상도(Hi-DPI) 모니터 폰트 선명도 개선"
+}
